@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universe Mod 帮助文档</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --container-bg: #f5f5f5;
+            --border-color: #e0e0e0;
+            --accent-color: #6a5acd; /* 紫色主题色 */
+            --icon-color: #5f6368;
+            --transition-time: 0.4s;
+            --sidebar-width: 280px;
+            --sidebar-bg: #f0f0f0;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --container-bg: #1e1e1e;
+            --border-color: #333333;
+            --accent-color: #9370db; /* 浅紫色 */
+            --icon-color: #9aa0a6;
+            --sidebar-bg: #1a1a1a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            transition: background-color var(--transition-time) ease, color var(--transition-time) ease;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 布局容器 */
+        .layout-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--sidebar-bg);
+            padding: 1rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: background-color var(--transition-time) ease;
+            z-index: 20;
+        }
+
+        .sidebar-header {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            margin: 0;
+            text-align: center;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: rgba(106, 90, 205, 0.1);
+            color: var(--accent-color);
+        }
+
+        .sidebar-menu a.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .menu-category {
+            font-weight: bold;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            padding-left: 1rem;
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: var(--container-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color var(--transition-time) ease, box-shadow var(--transition-time) ease;
+            border: 1px solid var(--border-color);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1, h2, h3 {
+            color: var(--accent-color);
+            transition: color var(--transition-time) ease;
+        }
+
+        h1 {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color var(--transition-time) ease;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background-color: var(--container-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all var(--transition-time) ease;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--icon-color);
+            transition: fill var(--transition-time) ease, transform 0.3s ease;
+        }
+
+        .theme-toggle:hover svg {
+            transform: scale(1.1);
+        }
+
+        /* 涟漪效果 */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(106, 90, 205, 0.3);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* 粒子动画 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .particle {
+            position: absolute;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1001;
+        }
+
+        /* 帮助文档内容样式 */
+        .help-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: border-color var(--transition-time) ease;
+        }
+
+        .help-section:last-child {
+            border-bottom: none;
+        }
+
+        .faq-item {
+            margin-bottom: 1rem;
+        }
+
+        .faq-question {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        .code-block {
+            background-color: var(--container-bg);
+            padding: 1rem;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            border-left: 3px solid var(--accent-color);
+            overflow-x: auto;
+            transition: all var(--transition-time) ease;
+        }
+
+        .mod-feature {
+            background-color: rgba(106, 90, 205, 0.1);
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .mod-feature h3 {
+            margin-top: 0;
+        }
+
+        .release-date {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+            .main-content {
+                margin-left: 240px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .layout-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 1rem;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            .container {
+                padding: 1rem;
+                border-radius: 0;
+            }
+            .theme-toggle {
+                bottom: 1rem;
+                right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="sidebar-title">Universe Mod</h1>
+            </div>
+            <nav>
+                <ul class="sidebar-menu">
+                    <li><a href="#home" class="active">主页</a></li>
+                    
+                    <li class="menu-category">模组信息</li>
+                    <li><a href="#about">关于 Universe Mod</a></li>
+                    <li><a href="#features">主要特性</a></li>
+                    <li><a href="#release">发布时间</a></li>
+                    
+                    <li class="menu-category">安装指南</li>
+                    <li><a href="#requirements">系统需求</a></li>
+                    <li><a href="#installation">安装教程</a></li>
+                    <li><a href="#compatibility">兼容性</a></li>
+                    
+                    <li class="menu-category">游戏内容</li>
+                    <li><a href="#dimensions">新维度</a></li>
+                    <li><a href="#items">新增物品</a></li>
+                    <li><a href="#mobs">新增生物</a></li>
+                    <li><a href="#machines">科技机器</a></li>
+                    
+                    <li class="menu-category">支持</li>
+                    <li><a href="#faq">常见问题</a></li>
+                    <li><a href="#issues">问题报告</a></li>
+                    <li><a href="#contact">联系我们</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <div class="container">
+                <h1 id="home">Universe Mod 帮助文档</h1>
+                
+                <div class="help-section">
+                    <h2 id="about">关于 Universe Mod</h2>
+                    <p>Universe Mod 是一个为 Minecraft Java Edition 1.21.1 设计的 Fabric Mod，旨在扩展游戏的多维度体验，添加全新的宇宙探索内容和科技系统。</p>
+                    <p>这个 Mod 受到诸多科幻作品的启发，为玩家提供了探索未知星系、建立跨维度基地和使用先进科技的机会。</p>
+                </div>
+                
+                <div class="help-section">
+                    <h2 id="features">主要特性</h2>
+                    
+                    <div class="mod-feature">
+                        <h3>多维宇宙探索</h3>
+                        <p>添加了5个全新的维度，每个都有独特的生物群系、资源和挑战：</p>
+                        <ul>
+                            <li>火星 - 红色沙漠与古代遗迹</li>
+                            <li>金星 - 酸性大气与火山地形</li>
+                            <li>木星卫星 - 冰封世界与外星海洋</li>
+                            <li>仙女座星系 - 外星文明遗迹</li>
+                            <li>黑洞维度 - 扭曲物理法则的奇异空间</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mod-feature">
+                        <h3>先进科技系统</h3>
+                        <p>引入全新的科技树和机器系统：</p>
+                        <ul>
+                            <li>量子传送装置 - 在不同维度间建立快速通道</li>
+                            <li>反重力引擎 - 实现自由飞行和建筑</li>
+                            <li>物质重组器 - 转换基础元素为稀有资源</li>
+                            <li>星际通讯网络 - 跨维度信息传递</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mod-feature">
+                        <h3>外星生物与文明</h3>
+                        <p>遇见全新的外星生物，有些友好，有些则充满敌意：</p>
+                        <ul>
+                            <li>硅基生命体 - 晶体结构的智慧生物</li>
+                            <li>等离子生物 - 能量构成的危险生命形式</li>
+                            <li>古代外星文明遗迹 - 探索并解密他们的技术</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="help-section">
+                    <h2 id="release">预计发布时间</h2>
+                    <div class="release-date">2026年第二季度</div>
+                    <p>我们计划在2026年第二季度发布 Universe Mod 的第一个正式版本。目前开发进度如下：</p>
+                    <ul>
+						<li>物品与方块：20%</li>
+						<li>材质/贴图：与物品方块进度同步</li>
+						<li>功能型系统：0%</li>
+						<li>实体：0%</li>
+						<li>进度系统：0%</li>
+                    </ul>
+                    <p>您可以在我们的 <a href="https://github.com/xhjt2/universe-1.21.1" target="_blank">GitHub 仓库</a> 关注开发进度。</p>
+                </div>
+                
+                <div class="help-section">
+                    <h2 id="requirements">系统需求</h2>
+                    <p>为了流畅运行 Universe Mod，我们推荐以下配置：</p>
+                    <ul>
+                        <li><strong>最低配置：</strong>
+                            <ul>
+                                <li>Minecraft 1.21.1</li>
+                                <li>Fabric Loader 0.15.0+</li>
+                                <li>Fabric API 0.85.0+</li>
+                                <li>4GB 内存分配</li>
+                                <li>支持OpenGL 3.2的显卡</li>
+                            </ul>
+                        </li>
+                        <li><strong>推荐配置：</strong>
+                            <ul>
+                                <li>6GB+ 内存分配</li>
+                                <li>现代多核CPU</li>
+                                <li>支持OpenGL 4.5的显卡</li>
+                                <li>SSD存储以获得更快的维度加载速度</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="help-section">
+                    <h2 id="installation">安装教程</h2>
+                    <p>安装 Universe Mod 非常简单，请按照以下步骤操作：</p>
+                    <ol>
+                        <li>确保已安装 Minecraft Java Edition 1.21.1</li>
+                        <li>下载并安装最新版 <a href="https://fabricmc.net/" target="_blank">Fabric Loader</a></li>
+                        <li>下载 <a href="https://www.curseforge.com/minecraft/mc-mods/fabric-api" target="_blank">Fabric API</a> 并放入 mods 文件夹</li>
+                        <li>从我们的发布页面下载 Universe Mod</li>
+                        <li>将 Universe Mod 的 jar 文件放入 Minecraft 的 mods 文件夹</li>
+                        <li>启动游戏并享受宇宙冒险！</li>
+                    </ol>
+                    <div class="code-block">
+                        # 示例mods文件夹结构
+                        .minecraft/
+                        ├── mods/
+                        │   ├── fabric-api-0.85.0+1.21.1.jar
+                        │   ├── universe-mod-1.0.0.jar
+                        │   └── ...
+                    </div>
+                </div>
+                
+                <div class="help-section">
+                    <h2 id="faq">常见问题</h2>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">Universe Mod 支持 Forge 吗？</div>
+                        <p>目前 Universe Mod 仅支持 Fabric 加载器。我们未来可能会考虑 NeoForge 版本，但不会移植至Forge</p>
+                    </div>
+					
+					<div class="faq-item">
+                        <div class="faq-question">Universe Mod与光影冲突吗？</div>
+                        <p>尚不清楚，等到Universe Mod进入测试阶段时将会解答该问题</p>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">这个 Mod 会与其他维度 Mod 冲突吗？</div>
+                        <p>Universe Mod 使用独立的维度注册系统，应该不会与其他主流维度 Mod 冲突。但如果遇到问题，请尝试调整加载顺序或联系我们</p>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">如何报告 Bug 或提供建议？</div>
+                        <p>您可以通过 GitHub Issues 页面报告问题或提交建议。请尽可能详细地描述您遇到的问题，包括日志文件和重现步骤</p>
+                    </div>
+                </div>
+                
+                <div class="help-section">
+                    <h2 id="contact">联系我们</h2>
+                    <p>如果您需要进一步的帮助或有合作意向，可以通过以下方式联系我们：</p>
+                    <ul>
+                        <li>Discord: <a href="https://discord.gg/yourinvite" target="_blank">加入我们的 Discord 服务器</a></li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 主题切换按钮 -->
+    <div class="theme-toggle" id="themeToggle">
+        <!-- 月亮图标 -->
+        <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36c-0.98,1.37-2.58,2.26-4.4,2.26 c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/>
+        </svg>
+        <!-- 星星图标 (初始隐藏) -->
+        <svg id="starIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
+            <path d="M12,17.27L18.18,21l-1.64-7.03L22,9.24l-7.19-0.61L12,2L9.19,8.63L2,9.24l5.46,4.73L5.82,21L12,17.27z"/>
+        </svg>
+    </div>
+
+    <!-- 粒子容器 -->
+    <div class="particles" id="particles"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const moonIcon = document.getElementById('moonIcon');
+            const starIcon = document.getElementById('starIcon');
+            const body = document.body;
+            const particlesContainer = document.getElementById('particles');
+            
+            // 检查本地存储中的主题偏好
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            if (currentTheme === 'dark') {
+                body.setAttribute('data-theme', 'dark');
+                moonIcon.style.display = 'none';
+                starIcon.style.display = 'block';
+            }
+            
+            // 添加涟漪效果
+            themeToggle.addEventListener('click', function(e) {
+                // 创建涟漪元素
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                
+                // 设置涟漪位置
+                const rect = themeToggle.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = size + 'px';
+                ripple.style.height = size + 'px';
+                ripple.style.left = e.clientX - rect.left - size/2 + 'px';
+                ripple.style.top = e.clientY - rect.top - size/2 + 'px';
+                
+                themeToggle.appendChild(ripple);
+                
+                // 动画结束后移除涟漪元素
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+                
+                // 切换主题
+                toggleTheme();
+            });
+            
+            function toggleTheme() {
+                // 创建粒子动画
+                createParticles();
+                
+                // 延迟切换主题，让粒子动画先开始
+                setTimeout(() => {
+                    const currentTheme = body.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    
+                    // 切换主题
+                    body.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                    
+                    // 切换图标
+                    if (newTheme === 'dark') {
+                        moonIcon.style.display = 'none';
+                        starIcon.style.display = 'block';
+                    } else {
+                        moonIcon.style.display = 'block';
+                        starIcon.style.display = 'none';
+                    }
+                }, 100);
+            }
+            
+            function createParticles() {
+                // 清空现有粒子
+                particlesContainer.innerHTML = '';
+                
+                // 获取页面尺寸
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                
+                // 创建200个粒子
+                const particleCount = 200;
+                const currentTheme = body.getAttribute('data-theme');
+                const particleColor = currentTheme === 'dark' ? '#9370db' : '#6a5acd';
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    
+                    // 随机大小 (2px到6px)
+                    const size = Math.random() * 4 + 2;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.backgroundColor = particleColor;
+                    
+                    // 随机起始位置 (全屏分布)
+                    const startX = Math.random() * width;
+                    const startY = Math.random() * height;
+                    particle.style.left = `${startX}px`;
+                    particle.style.top = `${startY}px`;
+                    
+                    // 随机目标位置 (从中心扩散或向中心聚集)
+                    const centerX = width / 2;
+                    const centerY = height / 2;
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = Math.random() * Math.max(width, height) / 2;
+                    
+                    if (currentTheme === 'dark') {
+                        // 深色转浅色：粒子从中心扩散
+                        particle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+                        particle.style.opacity = '0';
+                    } else {
+                        // 浅色转深色：粒子向中心聚集
+                        particle.style.transform = `translate(${centerX - startX}px, ${centerY - startY}px)`;
+                    }
+                    
+                    particlesContainer.appendChild(particle);
+                    
+                    // 动画粒子
+                    setTimeout(() => {
+                        if (currentTheme === 'dark') {
+                            // 深色转浅色：粒子从当前位置飞向随机位置并消失
+                            particle.style.transition = `transform 0.8s ease-out, opacity 0.8s ease-out`;
+                            particle.style.transform = 'translate(0, 0)';
+                            particle.style.opacity = '1';
+                        } else {
+                            // 浅色转深色：粒子飞向中心并消失
+                            particle.style.transition = `transform 0.8s ease-out, opacity 0.8s ease-out`;
+                            particle.style.transform = 'translate(0, 0)';
+                            particle.style.opacity = '0';
+                        }
+                        
+                        // 动画结束后移除粒子
+                        setTimeout(() => {
+                            particle.remove();
+                        }, 800);
+                    }, 10);
+                }
+            }
+
+            // 平滑滚动到锚点
+            document.querySelectorAll('.sidebar-menu a').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId.startsWith('#')) {
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            window.scrollTo({
+                                top: targetElement.offsetTop - 20,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
